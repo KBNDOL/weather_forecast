@@ -4,14 +4,19 @@ from keras.models import load_model
 import joblib
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import tensorflow as tf
 
 
-model = load_model('D:/pythonProjectTotal/weather_forecast/forecast/model/forecast_temp.keras')
-scaler_features = joblib.load('D:/pythonProjectTotal/weather_forecast/forecast/scaler/scaler_features.pkl')
-scaler_target_temp = joblib.load('D:/pythonProjectTotal/weather_forecast/forecast/scaler/scaler_target_temp.pkl')
+def custom_activation(x):
+    return tf.maximum(0.1 * x, x)
+model = load_model('D:/pythonProjectTotal/weather_forecast/train/model/forecast_future_temp.keras',custom_objects={'custom_activation': custom_activation})
+scaler_features = joblib.load('D:/pythonProjectTotal/weather_forecast/scaler/scaler_features.pkl')
+scaler_target_temp = joblib.load('D:/pythonProjectTotal/weather_forecast/scaler/scaler_target_temp.pkl')
 
 
-data = pd.read_excel('D:/pythonProjectTotal/weather_forecast/data/2023/weather_data_2023_04_hour.xlsx', engine='openpyxl')
+#data = pd.read_excel('D:/pythonProjectTotal/weather_forecast/data/test/weather_data_2022_extreme.xlsx', engine='openpyxl')
+#data = pd.read_excel('D:/pythonProjectTotal/weather_forecast/data/weather_data_2024_hour.xlsx', engine='openpyxl')
+data = pd.read_excel('D:/pythonProjectTotal/weather_forecast/weather_data_2024_04_hour.xlsx', engine='openpyxl')
 data['time'] = pd.to_datetime(data['time'])
 data.set_index('time', inplace=True)
 
@@ -55,6 +60,6 @@ plt.xlabel('Time')
 plt.ylabel('Temperature (°C)')
 plt.legend()
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
-plt.gca().xaxis.set_major_locator(mdates.HourLocator(interval=48))
+plt.gca().xaxis.set_major_locator(mdates.HourLocator(interval=12))
 plt.gcf().autofmt_xdate()
 plt.show()

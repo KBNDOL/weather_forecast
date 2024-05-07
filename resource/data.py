@@ -5,16 +5,14 @@ import os
 
 userId = '712744592809jfZtK'
 pwd = 'utNN8xi'
-timeRange = '[20240404160000,20240410040000]'
+timeRange = '[20240415160000,20240415160600]'
 dataFormat = 'json'
 interfaceId = 'getRadaFileByTimeRange'
 dataCode = 'RADA_L3_MST_V3_CREF_PNG'
 
 
-# 构建完整的API URL
 url = f"http://api.data.cma.cn:8090/api?userId={userId}&pwd={pwd}&dataFormat={dataFormat}&interfaceId={interfaceId}&dataCode={dataCode}&timeRange={timeRange}&elements=Station_Id_C,DATETIME,FORMAT,FILE_NAME"
 
-# 发起请求
 response = requests.get(url)
 if response.status_code == 200:
     try:
@@ -29,20 +27,15 @@ else:
 
 urls = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', response.text)
 
-# 基础目录名，所有文件都会保存在这个目录下的特定子目录中
 base_directory = "downloads"
 
-# 确保基础目录存在
 os.makedirs(base_directory, exist_ok=True)
 
 for url in urls:
-    # 从URL中提取文件名
     filename = url.split('?')[0].split('/')[-1]
 
-    # 替换文件名中的非法字符（如果需要）
     filename = filename.replace("%", "_").replace("=", "_").replace("&", "_")
 
-    # 根据文件名中包含的特定字符选择子目录
     if "ACCN" in filename:
         subdirectory = os.path.join(base_directory, "ACCN")
     elif "ACHN" in filename:
@@ -76,14 +69,13 @@ for url in urls:
     else:
         subdirectory = os.path.join(base_directory, "Others")
 
-    # 确保子目录存在
+
     os.makedirs(subdirectory, exist_ok=True)
 
-    # 构建保存文件的完整路径
+
     filepath = os.path.join(subdirectory, filename)
 
     try:
-        # 直接使用完整的URL下载
         response = requests.get(url, stream=True)
         if response.status_code == 200:
             with open(filepath, 'wb') as f:

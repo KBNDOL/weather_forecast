@@ -4,7 +4,7 @@ import tempfile
 from werkzeug.utils import secure_filename
 from forecast.forecast_temp import predict_temperature_from_excel
 from forecast.forecast_pres import predict_pres_from_excel
-
+from forecast.forecast_coco import predict_coco_from_excel
 app = Flask(__name__)
 
 UPLOAD_FOLDER = tempfile.mkdtemp()
@@ -23,8 +23,10 @@ def upload_file():
             try:
                 predicted_temp = predict_temperature_from_excel(filepath)
                 predicted_pressure = predict_pres_from_excel(filepath)
+                predicted_coco = predict_coco_from_excel(filepath)
                 prediction_text = f"Predicted Temperature: {predicted_temp:.2f}, " \
-                                  f"Pressure: {predicted_pressure:.2f}, "
+                                  f"Pressure: {predicted_pressure:.2f}, " \
+                                  f"Coco: {predicted_coco:.2f}, "
             except ValueError as e:
                 prediction_text = str(e)
 

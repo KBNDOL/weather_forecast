@@ -6,7 +6,6 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 import joblib
 import matplotlib.pyplot as plt
-from keras.layers import Bidirectional
 
 
 files = [
@@ -39,7 +38,7 @@ for i in range(1, hours_back + 1):
     data[f'pres_lag{i}'] = data['pres'].shift(i)
     data[f'coco_lag{i}'] = data['coco'].shift(i)
 
-data['future_pres'] = data['pres'].shift(-future_hours)
+data['future_prcp'] = data['prcp'].shift(-future_hours)
 data.dropna(inplace=True)
 
 features = ['temp','prcp', 'wdir', 'wspd', 'pres', 'coco'] + \
@@ -55,7 +54,7 @@ scaler_features = MinMaxScaler()
 data_scaled_features = scaler_features.fit_transform(data[features])
 
 scaler_target_pres = MinMaxScaler()
-data_scaled_target_pres = scaler_target_pres.fit_transform(data[['future_pres']])
+data_scaled_target_pres = scaler_target_pres.fit_transform(data[['future_prcp']])
 
 
 
